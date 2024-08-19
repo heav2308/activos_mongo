@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask CRUD Interface</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Flask CRUD Interface</h1>
+    
+    <h2>Cliente</h2>
+    <input type="text" id="clienteName" placeholder="Name">
+    <button onclick="createCliente()">Create Cliente</button>
+    <button onclick="readClientes()">Read Clientes</button>
+    <input type="text" id="clienteId" placeholder="Client ID">
+    <input type="text" id="clienteUpdateData" placeholder="New Data">
+    <button onclick="updateCliente()">Update Cliente</button>
+    <button onclick="deleteCliente()">Delete Cliente">
+    <pre id="clienteOutput"></pre>
+    
+    <!-- Repeat for other collections (Activo, Accion, Bono, Categoria, DepositoBancario, Transaccion, Valoracion) -->
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Cliente CRUD operations
+        function createCliente() {
+            const data = { name: document.getElementById('clienteName').value };
+            fetch('/cliente', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(response => response.json())
+              .then(result => alert('Cliente created with ID: ' + result._id));
+        }
+
+        function readClientes() {
+            fetch('/cliente').then(response => response.json())
+                             .then(documents => document.getElementById('clienteOutput').textContent = JSON.stringify(documents, null, 2));
+        }
+
+        function updateCliente() {
+            const id = document.getElementById('clienteId').value;
+            const data = { name: document.getElementById('clienteUpdateData').value };
+            fetch(`/cliente?id=${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            }).then(response => response.json())
+              .then(result => alert(result.message || result.error));
+        }
+
+        function deleteCliente() {
+            const id = document.getElementById('clienteId').value;
+            fetch(`/cliente?id=${id}`, {
+                method: 'DELETE'
+            }).then(response => response.json())
+              .then(result => alert(result.message || result.error));
+        }
+        
+        // Repeat similar functions for other collections
+    </script>
+</body>
+</html>
